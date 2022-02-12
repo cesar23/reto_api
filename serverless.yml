@@ -1,0 +1,97 @@
+# Cesar Auris saga
+
+service: examen-starwars
+
+custom:
+  #El  nombre de la tabla
+  tableName: 'people-table-${self:provider.stage}'
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  #-region y estado
+  stage: dev
+  region: us-east-1
+  #Aqui para  DynamoDB
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 'dynamodb:Query'        #consultas
+            - 'dynamodb:Scan'         #scan tablas
+            - 'dynamodb:GetItem'      #obtener
+            - 'dynamodb:PutItem'      #Actualizar  item
+            - 'dynamodb:UpdateItem'   #update  iten
+            - 'dynamodb:DeleteItem'   #delete
+          Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PEOPLE_TABLE}"
+
+
+  environment:
+    PEOPLE_TABLE: ${self:custom.tableName}
+
+functions:
+  getPeopleAll:
+    handler: src/peopleGetAll.init
+    events:
+      - http:
+          path: /people
+          method: get
+
+  getPeople:
+    handler: src/peopleGetItem.init
+    events:
+      - http:
+          path: /people/{id}
+          method: get
+#----------------------------------- dynamo
+  createPeopleDyna:
+    handler: src/peopleCreateItemDyna.init
+    events:
+      - http:
+          path: /people-dyna
+          method: post
+
+  peopleGetAllItemDyna:
+    handler: src/peopleGetAllItemDyna.init
+    events:
+      - http:
+          path: /people-dyna
+          method: get
+
+  getPeopleDyna:
+    handler: src/peopleGetItemDyna.init
+    events:
+      - http:
+          path: /people-dyna/{id}
+          method: get
+
+
+
+#-------Recursos----------
+resources:
+  Resources:
+    PeopleDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      #propiedades de la  tabla
+      Properties:
+        BillingMode: PROVISIONED #para no pagar mucho
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S #string type
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.tableName}
+#  Outputs:
+#     NewOutput:
+#       Description: "Description for the output"
+#       Value: "Some output value"
+#plugins:
+# - serverless-offline
+

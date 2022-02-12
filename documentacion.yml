@@ -1,0 +1,205 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: PROD
+    url: https://virtserver.swaggerhub.com/solucionessystem/examen_swapi/1.0.0
+  - description: DEV
+    url: https://1y9u7oezu6.execute-api.us-east-1.amazonaws.com/dev
+
+info:
+  description: Es
+  version: "1.0.0"
+  title: Swapi AWS
+  contact:
+    name: Cesar Auris saga
+    email: perucaos@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: deploy
+    description: Secured Admin-only calls
+
+paths:
+  /people:
+    get:
+      tags:
+        - deploy
+      summary: buscar todo los personajes (traduccion  de api)
+      operationId: getPeopleAll
+      description: |
+        Desde aqu podemos  buscar personajes
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/People'
+        '400':
+          description: bad input parameter
+
+  /people/{id}:
+    get:
+      tags:
+        - deploy
+      summary: Obtener  people por id (traduccion  de api)
+      operationId: getPeople
+      description: |
+        Desde aqu podemos  buscar personajes
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          description:  el id  es requerido
+          required: true
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeopleItem'
+        '400':
+          description: bad input parameter
+
+
+
+  /people-dyna:
+    get:
+      tags:
+        - deploy
+      summary: buscar todo los personajes (Mi Base DynamoDb)
+      operationId: peopleGetAllItemDyna
+      description: |
+        Desde Aqu   obtendremos  todo los  personajes
+      responses:
+        '200':
+          description: buscando...
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/People'
+        '400':
+          description: bad input parameter
+    post:
+      tags:
+        - deploy
+      summary: agregar Item  (Mi Base DynamoDb)
+      operationId: createPeopleDyna
+      description: agregar people a dynamodb
+      responses:
+        '201':
+          description: item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeopleItem'
+
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PeopleItem'
+        description: Inventory item to add
+components:
+  schemas:
+    People:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+        - $ref: '#/components/schemas/PeopleItem'
+    PeopleItem:
+      type: object
+      required:
+        - id
+        - nombre
+        - alto
+        - masa
+        - color_pelo
+        - color_piel
+        - color_ojo
+        - ano_nacimiento
+        - mundo_origen
+        - peliculas
+        - especies
+        - vehiculos
+        - inicio_enbarcacion
+        - link
+      properties:
+        id:
+          type: string
+          example: 9
+        nombre:
+          type: string
+          example: Luke Skywalker
+        alto:
+          type: string
+          example: 175
+        masa:
+          type: string
+          example: 77
+        color_pelo:
+          type: string
+          example: Negro
+        color_piel:
+          type: string
+          example: Widget Adapter
+        color_ojo:
+          type: string
+          example: Claros
+        ano_nacimiento:
+          type: string
+          example: 19 BB
+        genero:
+          type: string
+          example: Masculino
+        mundo_origen:
+          type: string
+          example: https://swapi.py4e.com/api/planets/1/
+        peliculas:
+          type: array
+          items:
+            type: string
+          example: [ "https://swapi.py4e.com/api/films/1/,https://swapi.py4e.com/api/films/1/" ]
+        especies:
+          type: array
+          items:
+            type: string
+          example: [
+              "https://swapi.py4e.com/api/species/1/",
+              "https://swapi.py4e.com/api/species/2/"
+          ]
+        vehiculos:
+          type: array
+          items:
+            type: string
+          example: [
+              "https://swapi.py4e.com/api/species/1/",
+              "https://swapi.py4e.com/api/species/2/"
+          ]
+        inicio_enbarcacion:
+          type: array
+          items:
+            type: string
+          example: [
+              "https://swapi.py4e.com/api/species/1/",
+              "https://swapi.py4e.com/api/species/2/"
+          ]
+        link:
+          type: string
+          example: https://swapi.py4e.com/api/people/1/

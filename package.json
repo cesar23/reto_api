@@ -1,0 +1,19 @@
+{
+  "name": "examen_StarWars",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "dependencies": {
+    "aws-sdk": "^2.895.0",
+    "axios": "^0.25.0",
+    "dynamoose": "^2.7.3",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
